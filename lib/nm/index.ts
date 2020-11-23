@@ -244,9 +244,23 @@ export class NetworkManager extends NetworkManagerTypes {
 	 *
 	 * @param network Object with 'ssid', 'passphrase' and (for now) optional 'mode' properties
 	 */
-	connectNetwork = async (network) => {
+	connectNetwork = async (network, ip) => {
 		try {
+
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
+			var ipv4 = [];
+			if (ip === null) {
+				ipv4 = 	['ipv4', [
+								['method', ['s', 'auto']],
+						]]
+			} else {
+				ipv4 = ['ipv4', [
+					     ['address1', ['s', ip + '/24,' + ip]],
+					     ['dns', ['s', ip + ';8.8.8.8;8.8.4.4;']],
+					     ['dns-search', ['s', '']],
+					     ['method', ['s', 'manual']],
+				]]
+			}
 			const connectionParam = [
 				['connection', [
 					['id', ['s', network.ssid]],
@@ -262,7 +276,10 @@ export class NetworkManager extends NetworkManagerTypes {
 					['psk', ['s', network.passphrase]],
 				]],
 				['ipv4', [
-					['method', ['s', 'auto']],
+					['address1', ['s', '192.168.8.100/24,192.168.8.1']],
+					['dns', ['s', '192.168.8.1;8.8.8.8;8.8.4.4;']],
+				  ['dns-search', ['s', '']],
+					['method', ['s', 'manual']],
 				]],
 				['ipv6', [
 					['method', ['s', 'auto']],
