@@ -1,4 +1,19 @@
 "use strict";
+/*
+ * Copyright 2018 resin.io
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,10 +50,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var Bluebird = require("bluebird");
 var nm_1 = require("../../nm");
 var routes = {
+    /**
+     * Connect to a network by ssid/passphrase
+     *
+     * @param {Object} value Object containing ssid (string) and passphrase (string) props
+     */
     'connect-network': {
         method: 'POST',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -48,20 +68,23 @@ var routes = {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         connection = req.body.value;
-                        return [4, nm.connectNetwork(connection)];
+                        return [4 /*yield*/, nm.connectNetwork(connection)];
                     case 1:
                         _a.sent();
                         res.status(200).json(connection);
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_1 = _a.sent();
                         res.status(err_1.code).json(err_1);
-                        return [3, 3];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
+        }); }
     },
+    /**
+     * List all nearby networks
+     */
     'list-nearby-networks': {
         method: 'GET',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -70,20 +93,23 @@ var routes = {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, nm.listNearbyNetworks()];
+                        return [4 /*yield*/, nm.listNearbyNetworks()];
                     case 1:
                         networks = _a.sent();
                         res.status(200).json(networks);
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_2 = _a.sent();
                         res.status(err_2.code).json(err_2);
-                        return [3, 3];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
+        }); }
     },
+    /**
+     * Get the currently active wireless network ssid
+     */
     'current-network': {
         method: 'GET',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -92,20 +118,25 @@ var routes = {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, nm.getCurrentNetwork()];
+                        return [4 /*yield*/, nm.getCurrentNetwork()];
                     case 1:
                         ssid = _a.sent();
                         res.status(200).json({ ssid: ssid });
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_3 = _a.sent();
                         res.status(err_3.code).json(err_3);
-                        return [3, 3];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
+        }); }
     },
+    /**
+     * Forget a network by ssid
+     *
+     * @param {Object} value * @param {Object} value Object containing the ssid prop (string)
+     */
     'forget-network': {
         method: 'POST',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -115,19 +146,24 @@ var routes = {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         network = req.body.value;
-                        return [4, nm.forgetNetwork(network)];
+                        return [4 /*yield*/, nm.forgetNetwork(network)];
                     case 1:
                         _a.sent();
                         res.status(200).json(network);
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_4 = _a.sent();
-                        return [2, res.status(err_4.code).json(err_4)];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [2 /*return*/, res.status(err_4.code).json(err_4)];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
+        }); }
     },
+    /**
+     * Toggle the WiFi Device
+     *
+     * @param {boolean} value boolean
+     */
     'toggle-wifi': {
         method: 'POST',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -137,20 +173,23 @@ var routes = {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
                         value = req.body.value;
-                        return [4, nm.toggleWifi(value)];
+                        return [4 /*yield*/, nm.toggleWifi(value)];
                     case 1:
                         newValue = _a.sent();
                         res.status(200).json({ value: newValue });
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_5 = _a.sent();
                         res.status(err_5.code).json(err_5);
-                        return [3, 3];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
+        }); }
     },
+    /**
+     * Get the state of the WiFi Device (active: true/false)
+     */
     'get-wifi-active': {
         method: 'GET',
         handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -159,21 +198,20 @@ var routes = {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4, nm.getDeviceStatus(nm.devices.wifi)];
+                        return [4 /*yield*/, nm.getDeviceStatus(nm.devices.wifi)];
                     case 1:
                         State = _a.sent();
                         active = State && (State !== nm_1.NetworkManager.DEVICE_STATE.DISCONNECTED);
                         res.status(200).json({ active: active });
-                        return [3, 3];
+                        return [3 /*break*/, 3];
                     case 2:
                         err_6 = _a.sent();
                         res.status(err_6.code).json(err_6);
-                        return [3, 3];
-                    case 3: return [2, Bluebird.resolve()];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/, Bluebird.resolve()];
                 }
             });
-        }); },
-    },
+        }); }
+    }
 };
-exports.default = routes;
-//# sourceMappingURL=index.js.map
+exports["default"] = routes;
