@@ -15,28 +15,35 @@
  * limitations under the License.
  */
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -68,6 +75,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
+exports.NetworkManager = exports.NetworkManagerError = void 0;
 var Bluebird = require("bluebird");
 var dbus = require("dbus-native");
 var _ = require("lodash");
@@ -86,6 +94,13 @@ var NetworkManager = /** @class */ (function (_super) {
     __extends(NetworkManager, _super);
     function NetworkManager() {
         var _this = _super.call(this) || this;
+        /**
+         * Toggle WiFi device on/off
+         *
+         * Activation is currently made by connecting to the first known wireless network
+         *
+         * @param value
+         */
         _this.toggleWifi = function (value) { return __awaiter(_this, void 0, void 0, function () {
             var success, err_1;
             return __generator(this, function (_a) {
@@ -110,6 +125,13 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Curried function used to call a DBUS NetworkManager object's interface method
+         * @param path Object path
+         * @param iface Object interface
+         * @param method Array of 2 params: 1. The method (string) 2. The method's signature (string)
+         * @param params Method params
+         */
         _this.callMethod = function (path) {
             if (path === void 0) { path = []; }
             return function (iface) {
@@ -133,18 +155,24 @@ var NetworkManager = /** @class */ (function (_super) {
                 };
             };
         };
+        /**
+         * Get an object's property
+         * @param params Array of 2 params: 1. Object's interface 2. Object's property
+         * @param path Object path
+         */
         _this.getObjectProperty = function (_a, path) {
             var iface = _a[0], prop = _a[1];
             return __awaiter(_this, void 0, void 0, function () {
-                var _b, _c, key, value, err_2;
+                var _b, key, value, err_2;
+                var _c;
                 return __generator(this, function (_d) {
                     switch (_d.label) {
                         case 0:
                             _d.trys.push([0, 2, , 3]);
                             return [4 /*yield*/, this.callMethod(path)('org.freedesktop.DBus.Properties')(['Get', 'ss'])([iface, prop])];
                         case 1:
-                            _c = _d.sent(), key = _c[0], value = _c[1][0];
-                            return [2 /*return*/, (_b = { path: path }, _b[prop] = value, _b)];
+                            _b = _d.sent(), key = _b[0], value = _b[1][0];
+                            return [2 /*return*/, (_c = { path: path }, _c[prop] = value, _c)];
                         case 2:
                             err_2 = _d.sent();
                             throw formatError(500, "Could not getObjectProperty on " + path, err_2);
@@ -153,6 +181,9 @@ var NetworkManager = /** @class */ (function (_super) {
                 });
             });
         };
+        /**
+         * Get the first WiFi Device available
+         */
         _this.getWifiDevice = function () { return __awaiter(_this, void 0, void 0, function () {
             var devices_1, getDevicesProperty, devicesTypes, wifiDevices, err_3;
             var _this = this;
@@ -183,6 +214,11 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Get a network Device status
+         *
+         * @param device The Device to get status of
+         */
         _this.getDeviceStatus = function (device) { return __awaiter(_this, void 0, void 0, function () {
             var State, err_4;
             return __generator(this, function (_a) {
@@ -200,13 +236,51 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Activate a network Device with the first available connection
+         *
+         * @param path Device Object path
+         */
         _this.connectDevice = function (path) { return _this.callMethod()()(['ActivateConnection', 'ooo'])(['/', path, '/']); };
+        /**
+         * Disconnect a network Device
+         *
+         * @param path Device Object path
+         */
         _this.disconnectDevice = function (path) { return _this.callMethod(path)('org.freedesktop.NetworkManager.Device')(['Disconnect', ''])(); };
+        /**
+         * Activate a given Connection
+         *
+         * @param params DBUS NetworkManager method ActivateConnection params array
+         */
         _this.activateConnection = function (params) { return _this.callMethod()()(['ActivateConnection', 'ooo'])(params); };
+        /**
+         * Add a new Connectionn
+         *
+         * @param params DBUS NetworkManager Settings method AddConnection params array
+         */
         _this.addConnection = function (params) { return _this.callMethod(['Settings'])(['Settings'])(['AddConnection', 'a{sa{sv}}'])([params]); };
+        /**
+         * Delete a Connection
+         *
+         * @param path Settings Connection Object path
+         */
         _this.deleteConnection = function (path) { return _this.callMethod(path)(['Settings', 'Connection'])(['Delete', ''])(); };
+        /**
+         * Request a scan on nearby AccessPoint on the current Wireless Device
+         *
+         * @param params DBUS NetworkManager Device Wireless method RequestScan params array
+         */
         _this.requestScan = function (params) { return _this.callMethod(_this.devices.wifi.path)('org.freedesktop.NetworkManager.Device.Wireless')(['RequestScan', 'a{sv}'])([params]); };
+        /**
+         * Get the currently active network connections
+         */
         _this.getActiveConnections = function () { return _this.callMethod()('org.freedesktop.DBus.Properties')(['Get', 'ss'])(['org.freedesktop.NetworkManager', 'ActiveConnections']); };
+        /**
+         * Get a Connection's Settings
+         *
+         * @param path Settings Connection Object path
+         */
         _this.getConnectionSettings = function (path) { return __awaiter(_this, void 0, void 0, function () {
             var value, err_5;
             return __generator(this, function (_a) {
@@ -224,13 +298,35 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Connect to a network with SSID/Passphrase
+         *
+         * @param network Object with 'ssid', 'passphrase' and (for now) optional 'mode' properties
+         */
         _this.connectNetwork = function (network) { return __awaiter(_this, void 0, void 0, function () {
-            var netMode, connectionParam, ap, results, wifiConnection, networkSettings, err_6;
+            var netMode, ipv4, connectionParam, ap, results, wifiConnection, networkSettings, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 6, , 7]);
                         netMode = _(NetworkManager.MODE_802_11).filter(function (mode) { return mode === network.mode; }).value();
+                        ipv4 = [];
+                        if (network.static) {
+                            ipv4 = ['ipv4', [
+                                    ['method', ['s', 'manual']],
+                                    ['dns', ['au', [17344704, 134744072, 67373064]]],
+                                    ['dns-search', ['as', []]],
+                                    ['addresses', ['aau', [[2852694208, 24, 17344704]]]],
+                                    ['route-data', ['aa{sv}', [[]]]],
+                                    ['routes', ['aau', [[]]]],
+                                ]];
+                        }
+                        else {
+                            ipv4 = ['ipv4', [
+                                    ['method', ['s', 'auto']],
+                                ]];
+                        }
+                        console.log(ipv4);
                         connectionParam = [
                             ['connection', [
                                     ['id', ['s', network.ssid]],
@@ -245,9 +341,7 @@ var NetworkManager = /** @class */ (function (_super) {
                                     ['key-mgmt', ['s', 'wpa-psk']],
                                     ['psk', ['s', network.passphrase]],
                                 ]],
-                            ['ipv4', [
-                                    ['method', ['s', 'auto']],
-                                ]],
+                            ipv4,
                             ['ipv6', [
                                     ['method', ['s', 'auto']],
                                 ]],
@@ -262,10 +356,14 @@ var NetworkManager = /** @class */ (function (_super) {
                     case 1:
                         results = _a.sent();
                         wifiConnection = findConnection(results, network);
+                        console.log(wifiConnection);
                         if (!!_.isUndefined(wifiConnection)) return [3 /*break*/, 3];
+                        console.log('Using existing connection');
                         return [4 /*yield*/, this.activateConnection([wifiConnection.path, this.devices.wifi.path, '/'])];
                     case 2: return [2 /*return*/, _a.sent()];
-                    case 3: return [4 /*yield*/, this.addConnection(connectionParam)];
+                    case 3:
+                        console.log(connectionParam);
+                        return [4 /*yield*/, this.addConnection(connectionParam)];
                     case 4:
                         networkSettings = _a.sent();
                         return [4 /*yield*/, this.activateConnection([networkSettings, this.devices.wifi.path, '/'])];
@@ -277,6 +375,9 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * List all currently registered Connections
+         */
         _this.listConnections = function () { return __awaiter(_this, void 0, void 0, function () {
             var connections_1, getConnectionsSettings, results, err_7;
             var _this = this;
@@ -299,6 +400,11 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Forget a registered network with SSID
+         *
+         * @param network Object with 'ssid' property
+         */
         _this.forgetNetwork = function (network) { return __awaiter(_this, void 0, void 0, function () {
             var results, wifiConnection, err_8;
             return __generator(this, function (_a) {
@@ -323,6 +429,9 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * List all neaby networks
+         */
         _this.listNearbyNetworks = function () { return __awaiter(_this, void 0, void 0, function () {
             var requestScanParams, err_9;
             return __generator(this, function (_a) {
@@ -346,11 +455,21 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Safety check on common errors when using RequestScan repeatedly, which isn't allowed before 3 seconds from the last scan or when a Wireless Device isn't active
+         *
+         * @param status Error message received from RequestScan
+         */
         _this.ignoreScanStatus = function (status) {
             return status === 'Scanning not allowed while already scanning' ||
                 status === 'Scanning not allowed immediately following previous scan' ||
                 status === 'Scanning not allowed while unavailable or activating';
         };
+        /**
+         * Get the AccessPoints found by a Wireless Device
+         *
+         * @param wifiDevicePath Wireless Device Object path
+         */
         _this.getAccessPoints = function (wifiDevicePath) { return __awaiter(_this, void 0, void 0, function () {
             var AccessPoints, getApsProperties, rawAccessPoints, accessPoints;
             var _this = this;
@@ -365,7 +484,7 @@ var NetworkManager = /** @class */ (function (_super) {
                         rawAccessPoints = _a.sent();
                         accessPoints = _.map(rawAccessPoints, function (rawProps) {
                             var props = _.reduce(rawProps, function (acc, prop) {
-                                return __assign({}, acc, prop);
+                                return __assign(__assign({}, acc), prop);
                             }, {});
                             return props;
                         });
@@ -374,6 +493,11 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Get the basic AccessPoint's properties needed to present it to a GUI
+         *
+         * @param path AccessPoint Object path
+         */
         _this.getApProperties = function (path) { return __awaiter(_this, void 0, void 0, function () {
             var props, err_10;
             return __generator(this, function (_a) {
@@ -397,6 +521,9 @@ var NetworkManager = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * Get the currently active Wireless Connection
+         */
         _this.getCurrentNetwork = function () { return __awaiter(_this, void 0, void 0, function () {
             var _a, key, connections_2, getConnectionProperty_1, getConnectionsType, results, wifiConnection, Connection, settings, wifiProps, _b, wifiType, ssid, err_11;
             return __generator(this, function (_c) {
@@ -448,6 +575,9 @@ var NetworkManager = /** @class */ (function (_super) {
         };
         return _this;
     }
+    /**
+     * Get the first WiFi Device available then return this service instance
+     */
     NetworkManager.prototype.init = function () {
         var _this = this;
         return this.getWifiDevice()
@@ -455,12 +585,21 @@ var NetworkManager = /** @class */ (function (_super) {
             return _this;
         });
     };
+    /**
+     * Return the connection to DBUS system bus
+     */
     NetworkManager.prototype.getBus = function () {
         return systemBus;
     };
     return NetworkManager;
 }(types_1.NetworkManagerTypes));
 exports.NetworkManager = NetworkManager;
+/**
+ * Format an error to be used by exception handlers
+ * @param code HTTP Code
+ * @param message Error message
+ * @param err Error data
+ */
 function formatError(code, message, err) {
     if (code === void 0) { code = 400; }
     if (err === void 0) { err = {}; }
@@ -472,6 +611,12 @@ function formatError(code, message, err) {
     error.code = String(code);
     return error;
 }
+/**
+ * Find a network in a list of Connection Settings
+ *
+ * @param connections Array of Connection Settings
+ * @param network Object with 'ssid' property
+ */
 function findConnection(connections, network) {
     return _.head(_.filter(connections, function (result) {
         var wifiProps = getProp(result.settings, '802-11-wireless');
@@ -482,6 +627,10 @@ function findConnection(connections, network) {
         return false;
     }));
 }
+/**
+ * Format AccessPoints to be presented on a GUI
+ * @param rawNetworks Networks data obtained by getAccessPoints
+ */
 function makeNetworksReadable(rawNetworks) {
     return _.map(rawNetworks, function (rawNetwork) {
         var network = _.reduce(rawNetwork, function (acc, val, key) {
@@ -528,6 +677,10 @@ function makeNetworksReadable(rawNetworks) {
         return newNetwork;
     });
 }
+/**
+ *
+ * @param nmSecurityTypes DBUS NetworkManager security props to be checked against (can be NM80211ApFlags or NM80211ApSecurityFlags)
+ */
 function checkSecurityProps(nmSecurityTypes) {
     return function (prop) {
         var bitFlagVal = _.reverse((prop).toString(2).split(''));
@@ -542,6 +695,9 @@ function checkSecurityProps(nmSecurityTypes) {
         return flags;
     };
 }
+/**
+ * Helper function to convert a string to an array of bytes
+ */
 function stringToArrayOfBytes(str) {
     var bytes = [];
     for (var i = 0; i < str.length; ++i) {
@@ -549,6 +705,11 @@ function stringToArrayOfBytes(str) {
     }
     return bytes;
 }
+/**
+ * Helper function to find a Connection Settings' property
+ * @param settings Settings object
+ * @param prop Property to find
+ */
 function getProp(settings, prop) {
     var setting = settings.find(function (setting) { return setting[0] === prop; });
     if (setting) {

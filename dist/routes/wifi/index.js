@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -49,14 +50,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var _this = this;
 exports.__esModule = true;
 var Bluebird = require("bluebird");
 var nm_1 = require("../../nm");
-exports["default"] = {
+var routes = {
+    /**
+     * Connect to a network by ssid/passphrase
+     *
+     * @param {Object} value Object containing ssid (string) and passphrase (string) props
+     */
     'connect-network': {
         method: 'POST',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var connection, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -77,9 +82,12 @@ exports["default"] = {
             });
         }); }
     },
+    /**
+     * List all nearby networks
+     */
     'list-nearby-networks': {
         method: 'GET',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var networks, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -99,9 +107,12 @@ exports["default"] = {
             });
         }); }
     },
+    /**
+     * Get the currently active wireless network ssid
+     */
     'current-network': {
         method: 'GET',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var ssid, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -121,9 +132,14 @@ exports["default"] = {
             });
         }); }
     },
+    /**
+     * Forget a network by ssid
+     *
+     * @param {Object} value * @param {Object} value Object containing the ssid prop (string)
+     */
     'forget-network': {
         method: 'POST',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var network, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -143,9 +159,14 @@ exports["default"] = {
             });
         }); }
     },
+    /**
+     * Toggle the WiFi Device
+     *
+     * @param {boolean} value boolean
+     */
     'toggle-wifi': {
         method: 'POST',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var value, newValue, err_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -166,9 +187,12 @@ exports["default"] = {
             });
         }); }
     },
+    /**
+     * Get the state of the WiFi Device (active: true/false)
+     */
     'get-wifi-active': {
         method: 'GET',
-        handler: function (nm, req, res) { return __awaiter(_this, void 0, void 0, function () {
+        handler: function (nm, req, res) { return __awaiter(void 0, void 0, void 0, function () {
             var State, active, err_6;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -190,3 +214,4 @@ exports["default"] = {
         }); }
     }
 };
+exports["default"] = routes;
