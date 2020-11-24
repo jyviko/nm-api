@@ -247,6 +247,25 @@ export class NetworkManager extends NetworkManagerTypes {
 	connectNetwork = async (network) => {
 		try {
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
+			const ipv4 = [] as any;
+            if (network.static) {
+                ipv4 = ['ipv4', [
+                        ['method', ['s', 'manual']],
+                        ['dns', ['au', [17344704, 134744072, 67373064]]],
+                        ['dns-search', ['as', []]],
+                        ['addresses', ['aau', [[2852694208, 24, 17344704]]]],
+                        ['route-data', ['aa{sv}', [[]]]],
+                        ['routes', ['aau', [[]]]],
+                    ]];
+            }
+            else {
+                ipv4 = ['ipv4', [
+                        ['method', ['s', 'auto']],
+                    ]];
+            }
+			
+            console.log(ipv4);
+			
 			const connectionParam = [
 				['connection', [
 					['id', ['s', network.ssid]],
@@ -261,9 +280,7 @@ export class NetworkManager extends NetworkManagerTypes {
 					['key-mgmt', ['s', 'wpa-psk']],
 					['psk', ['s', network.passphrase]],
 				]],
-				['ipv4', [
-					['method', ['s', 'auto']],
-				]],
+				ipv4,
 				['ipv6', [
 					['method', ['s', 'auto']],
 				]],
@@ -278,10 +295,12 @@ export class NetworkManager extends NetworkManagerTypes {
 			// Check if network's already registered on the device
 			const results = await this.listConnections();
 			const wifiConnection = findConnection(results, network);
+			console.log(wifiConnection);
 			if (!_.isUndefined(wifiConnection)) {
+				console.log('Using existing connection');
 				return await this.activateConnection([wifiConnection.path, this.devices.wifi.path, '/']);
 			}
-
+			console.log(connectionParam);
 			const networkSettings = await this.addConnection(connectionParam);
 			return await this.activateConnection([networkSettings, this.devices.wifi.path, '/']);
 		} catch (err) {
@@ -534,7 +553,7 @@ function checkSecurityProps(nmSecurityTypes) {
  * Helper function to convert a string to an array of bytes
  */
 function stringToArrayOfBytes(str) {
-	const bytes = [];
+	const bytes = [] as any;
 	for (let i = 0; i < str.length; ++i) {
 		bytes.push(str.charCodeAt(i));
 	}
