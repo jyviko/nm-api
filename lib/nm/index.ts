@@ -249,7 +249,7 @@ export class NetworkManager extends NetworkManagerTypes {
 
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
 			var ipv4 = [];
-			if (ip === null) {
+			if (network.staticIP === null) {
 				ipv4 = 	['ipv4', [
 								['method', ['s', 'auto']],
 						]]
