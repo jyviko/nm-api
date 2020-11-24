@@ -254,8 +254,7 @@ export class NetworkManager extends NetworkManagerTypes {
 					['method', ['s', 'manual']],
 					['dns', ['au', [17344704, 134744072, 67373064]]],
 					['dns-search', ['as',[]]],
-					['addresses', ['aau',[[1678289088, 24, 17344704]]]],
-					['gateway', ['s', network.static.gateway]],
+					['addresses', ['aau',[[2852694208, 24, 17344704]]]],
 					['route-data',['aa{sv}',[[]]]],
 					['routes', ['aau',[[]]]],
 				]]
