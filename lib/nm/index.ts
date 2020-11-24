@@ -257,12 +257,13 @@ export class NetworkManager extends NetworkManagerTypes {
 					['addresses', ['aau',[[2852694208, 24, 17344704]]]],
 					['route-data',['aa{sv}',[[]]]],
 					['routes', ['aau',[[]]]],
-				]]
+				]];
 			} else {
 				ipv4 = 	['ipv4', [
 					['method', ['s', 'auto']],
-				]]
+				]];
 			}
+			console.log(ipv4);
 			const connectionParam = [
 				['connection', [
 					['id', ['s', network.ssid]],
@@ -292,12 +293,17 @@ export class NetworkManager extends NetworkManagerTypes {
 			// Check if network's already registered on the device
 			const results = await this.listConnections();
 			const wifiConnection = findConnection(results, network);
+			console.log(wifiConnection);
 			if (!_.isUndefined(wifiConnection)) {
+				console.log('Using stored connection settings');
 				return await this.activateConnection([wifiConnection.path, this.devices.wifi.path, '/']);
 			}
 
 			const networkSettings = await this.addConnection(connectionParam);
-			return await this.activateConnection([networkSettings, this.devices.wifi.path, '/']);
+			console.log(networkSettings);
+
+			//return await this.activateConnection([networkSettings, this.devices.wifi.path, '/']);
+			return true;
 		} catch (err) {
 			throw formatError(500, 'Could not connectNetwork', err);
 		}
