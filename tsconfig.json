@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"lib": ["es5", "es6" ],
+		"noImplicitAny": false,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noEmit": false,
+                "preserveConstEnums": true,
+		"removeComments": true,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"declaration": true,
+        	"rootDir": ".",
+        	"outDir": "dist"
+	},
+	"include": [
+		"./lib/**/*.ts"
+	],
+  	"exclude": [
+    		"node_modules",
+		"typings"
+  	]	
+}

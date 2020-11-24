@@ -248,7 +248,7 @@ export class NetworkManager extends NetworkManagerTypes {
 		try {
 
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
-			let ipv4 = [];
+			let ipv4 = [] as any;
 			if (network.static) {
 				ipv4 = ['ipv4', [
 					['method', ['s', 'manual']],
@@ -554,7 +554,7 @@ function checkSecurityProps(nmSecurityTypes) {
  * Helper function to convert a string to an array of bytes
  */
 function stringToArrayOfBytes(str) {
-	const bytes = [];
+	const bytes = [] as any;
 	for (let i = 0; i < str.length; ++i) {
 		bytes.push(str.charCodeAt(i));
 	}
