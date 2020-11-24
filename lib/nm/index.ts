@@ -244,7 +244,7 @@ export class NetworkManager extends NetworkManagerTypes {
 	 *
 	 * @param network Object with 'ssid', 'passphrase' and (for now) optional 'mode' properties
 	 */
-	connectNetwork = async (network, ip) => {
+	connectNetwork = async (network) => {
 		try {
 
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
@@ -255,8 +255,8 @@ export class NetworkManager extends NetworkManagerTypes {
 						]]
 			} else {
 				ipv4 = ['ipv4', [
-					     ['address1', ['s', ip + '/24,' + ip]],
-					     ['dns', ['s', ip + ';8.8.8.8;8.8.4.4;']],
+					     ['address1', ['s', network.staticIP + '/24,' + network.staticIP]],
+					     ['dns', ['s', network.staticIP + ';8.8.8.8;8.8.4.4;']],
 					     ['dns-search', ['s', '']],
 					     ['method', ['s', 'manual']],
 				]]
