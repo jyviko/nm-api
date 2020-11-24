@@ -248,17 +248,17 @@ export class NetworkManager extends NetworkManagerTypes {
 		try {
 
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
-			var ipv4 = [];
-			if (network.staticIP === null) {
-				ipv4 = 	['ipv4', [
-								['method', ['s', 'auto']],
-						]]
-			} else {
+			let ipv4 = [];
+			if (network.staticIP) {
 				ipv4 = ['ipv4', [
-					     ['address1', ['s', network.staticIP + '/24,' + network.staticIP]],
-					     ['dns', ['s', network.staticIP + ';8.8.8.8;8.8.4.4;']],
-					     ['dns-search', ['s', '']],
-					     ['method', ['s', 'manual']],
+					['address1', ['s', network.staticIP + '/24,' + network.staticIP]],
+					['dns', ['s', network.staticIP + ';8.8.8.8;8.8.4.4;']],
+					['dns-search', ['s', '']],
+					['method', ['s', 'manual']],
+				]]
+			} else {
+				ipv4 = 	['ipv4', [
+					['method', ['s', 'auto']],
 				]]
 			}
 			const connectionParam = [
@@ -275,12 +275,7 @@ export class NetworkManager extends NetworkManagerTypes {
 					['key-mgmt', ['s', 'wpa-psk']],
 					['psk', ['s', network.passphrase]],
 				]],
-				['ipv4', [
-					['address1', ['s', '192.168.8.100/24,192.168.8.1']],
-					['dns', ['s', '192.168.8.1;8.8.8.8;8.8.4.4;']],
-				  ['dns-search', ['s', '']],
-					['method', ['s', 'manual']],
-				]],
+				ipv4,
 				['ipv6', [
 					['method', ['s', 'auto']],
 				]],
