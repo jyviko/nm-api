@@ -251,21 +251,19 @@ export class NetworkManager extends NetworkManagerTypes {
             if (network.static) {
                 ipv4 = ['ipv4', [
                         ['method', ['s', 'manual']],
-                        ['dns', ['au', [17344704, 134744072, 67373064]]],
+                        ['dns', ['au', [17344704, 134744072, 67373064]]], // TODO: convert this from dns param
                         ['dns-search', ['as', []]],
-                        ['addresses', ['aau', [[2852694208, 24, 17344704]]]],
-                        ['route-data', ['aa{sv}', [[]]]],
-                        ['routes', ['aau', [[]]]],
+												['address-data',['aa{sv}', [[{'address': ['s', network.static.IP], 'prefix': ['u', 24]}]]]],
+						 						['gateway', ['s', network.static.gateway]],
+                       // ['addresses', ['aau', [[2852694208, 24, 17344704]]]],
+                       // ['route-data', ['aa{sv}', [[]]]],
                     ]];
             }
             else {
-                ipv4 = ['ipv4', [
-                        ['method', ['s', 'auto']],
-                    ]];
-            }
-			
-            console.log(ipv4);
-			
+            	   ipv4 = ['ipv4', [
+            	   		['method', ['s', 'auto']],
+								 ]];
+						}
 			const connectionParam = [
 				['connection', [
 					['id', ['s', network.ssid]],
@@ -300,8 +298,8 @@ export class NetworkManager extends NetworkManagerTypes {
 				console.log('Using existing connection');
 				return await this.activateConnection([wifiConnection.path, this.devices.wifi.path, '/']);
 			}
-			console.log(connectionParam);
 			const networkSettings = await this.addConnection(connectionParam);
+			console.log(networkSettings);
 			return await this.activateConnection([networkSettings, this.devices.wifi.path, '/']);
 		} catch (err) {
 			throw formatError(500, 'Could not connectNetwork', err);

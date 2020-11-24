@@ -316,9 +316,8 @@ var NetworkManager = /** @class */ (function (_super) {
                                     ['method', ['s', 'manual']],
                                     ['dns', ['au', [17344704, 134744072, 67373064]]],
                                     ['dns-search', ['as', []]],
-                                    ['addresses', ['aau', [[2852694208, 24, 17344704]]]],
-                                    ['route-data', ['aa{sv}', [[]]]],
-                                    ['routes', ['aau', [[]]]],
+                                    ['address-data', ['aa{sv}', [[{ 'address': ['s', network.static.IP], 'prefix': ['u', 24] }]]]],
+                                    ['gateway', ['s', network.static.gateway]],
                                 ]];
                         }
                         else {
@@ -326,7 +325,6 @@ var NetworkManager = /** @class */ (function (_super) {
                                     ['method', ['s', 'auto']],
                                 ]];
                         }
-                        console.log(ipv4);
                         connectionParam = [
                             ['connection', [
                                     ['id', ['s', network.ssid]],
@@ -361,11 +359,10 @@ var NetworkManager = /** @class */ (function (_super) {
                         console.log('Using existing connection');
                         return [4 /*yield*/, this.activateConnection([wifiConnection.path, this.devices.wifi.path, '/'])];
                     case 2: return [2 /*return*/, _a.sent()];
-                    case 3:
-                        console.log(connectionParam);
-                        return [4 /*yield*/, this.addConnection(connectionParam)];
+                    case 3: return [4 /*yield*/, this.addConnection(connectionParam)];
                     case 4:
                         networkSettings = _a.sent();
+                        console.log(networkSettings);
                         return [4 /*yield*/, this.activateConnection([networkSettings, this.devices.wifi.path, '/'])];
                     case 5: return [2 /*return*/, _a.sent()];
                     case 6:
