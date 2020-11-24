@@ -249,12 +249,15 @@ export class NetworkManager extends NetworkManagerTypes {
 
 			const netMode = _(NetworkManager.MODE_802_11).filter((mode) => mode === network.mode).value();
 			let ipv4 = [];
-			if (network.staticIP) {
+			if (network.static) {
 				ipv4 = ['ipv4', [
-					['address1', ['s', network.staticIP + '/24,' + network.staticIP]],
-					['dns', ['s', network.staticIP + ';8.8.8.8;8.8.4.4;']],
-					['dns-search', ['s', '']],
 					['method', ['s', 'manual']],
+					['dns', ['au', [17344704, 134744072, 67373064]]],
+					['dns-search', ['as',[]]],
+					['addresses', ['aau',[[1678289088, 24, 17344704]]]],
+					['gateway', ['s', network.static.gateway]],
+					['route-data',['aa{sv}',[[]]]],
+					['routes', ['aau',[[]]]],
 				]]
 			} else {
 				ipv4 = 	['ipv4', [
